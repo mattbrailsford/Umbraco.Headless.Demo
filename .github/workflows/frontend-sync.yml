@@ -2,8 +2,8 @@ name: 'Upstream Frontend Sync'
 
 on:
   schedule:
-    - cron: "*/5 * * * *"
-    # scheduled every 5 minutes
+    - cron: "*/30 * * * *"
+    # scheduled every 30 minutes
 
   workflow_dispatch:  # click the button on Github repo!
 
