@@ -5,37 +5,29 @@ on:
     types: [sync-request]
 
 jobs:
-  sync_latest_from_upstream:
+  sync:
     runs-on: ubuntu-latest
-    name: Sync latest frontend commits from upstream repo
-    strategy:
-      matrix:
-        branch: [frontend/main, frontend/dev]
+    name: Sync frontend branch from upstream
 
     steps:
-    # REQUIRED step
     - name: Checkout target repo
       uses: actions/checkout@v3
       with:
-        ref: ${{ matrix.branch }}
+        ref: ${{ github.event.client_payload.branch }}
 
-    # REQUIRED step
     - name: Sync upstream changes
       id: sync
       uses: aormsby/Fork-Sync-With-Upstream-action@v3.4
       with:
-        target_sync_branch: ${{ matrix.branch }}
+        target_sync_branch: ${{ github.event.client_payload.branch }}
         target_repo_token: ${{ secrets.GITHUB_TOKEN }}
-        upstream_sync_branch: ${{ matrix.branch }}
+        upstream_sync_branch: ${{ github.event.client_payload.branch }}
         upstream_sync_repo: umbraco/Umbraco.Headless.Demo
 
     - name: New commits found
       if: steps.sync.outputs.has_new_commits == 'true'
-      run: echo "New commits were found to sync on branch ${{ matrix.branch }}."
+      run: echo "New commits were found to sync in ${{ github.event.client_payload.branch }}."
 
     - name: No new commits
       if: steps.sync.outputs.has_new_commits == 'false'
-      run: echo "There were no new commits on branch ${{ matrix.branch }}."
-
-    - name: Show value of 'has_new_commits'
-      run: echo "Branch: ${{ matrix.branch }} → ${{ steps.sync.outputs.has_new_commits }}"
+      run: echo "No new commits in ${{ github.event.client_payload.branch }}."
