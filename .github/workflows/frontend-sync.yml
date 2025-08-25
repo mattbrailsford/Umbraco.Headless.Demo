@@ -1,7 +1,8 @@
 name: 'Upstream Frontend Sync'
 
 on:
-  workflow_dispatch:  # click the button on Github repo!
+  repository_dispatch:
+    types: [sync-request]
 
 jobs:
   sync_latest_from_upstream:
